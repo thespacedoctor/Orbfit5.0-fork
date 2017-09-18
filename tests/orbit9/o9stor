@@ -1,0 +1,16 @@
+ mkdir $2
+#mv -i vast.dat $2/$1ast.dat
+#gzip vast.fil
+gzip $1ast.fil
+#mv -i vast.fil.gz $2/$1ast.fil.gz
+mv  -i $1ast.fil.gz $2
+#mv -i vpla.dat $2/$1pla.dat
+gzip vpla.fil
+mv -i vpla.fil.gz $2/$1pla.fil.gz
+mv -i orb9.out $2/$1o9.out
+gzip orb9.dm*
+mv -i orb9.dma.gz $2/$1o9.dma.gz
+mv -i orb9.dmp.gz $2/$1o9.dmp.gz
+mv -i orb9.num $2/$1o9.num
+mv -i orb9.clo $2/$1o9.clo
+cp -i orb9.opt $2/$1o9.opt

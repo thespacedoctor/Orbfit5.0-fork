@@ -1,0 +1,171 @@
+
+choose_angles.o: \
+	../suit/fund_const.mod 
+
+choose_deg.o: \
+	../suit/fund_const.mod 
+
+chooserhs.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	kantorovich.o \
+	planet_orbits.o \
+	pldata.h90 \
+	right_hand_side.o 
+
+dat2fla.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 
+
+dat2fla_clones.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 
+
+dmint_evol.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	../suit/output_control.mod \
+	planet_orbits.o \
+	pldata.h90 
+
+dmintil_deriv.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	planet_orbits.o \
+	pldata.h90 \
+	right_hand_side.o 
+
+falsectra.o: \
+	../suit/fund_const.mod \
+	neoopt.h90 \
+	rkg_local.o 
+
+fil2fla.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 
+
+kantorovich.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	pldata.h90 
+
+moid_timeder.o: \
+	../propag/critical_points.mod \
+	../propag/dyn_param.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	../suit/output_control.mod \
+	planet_orbits.o \
+	pldata.h90 
+
+mutualrefcha.o: \
+	../suit/fund_const.mod 
+
+orbit_diff.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 
+
+pladat.o: \
+	pldata.h90 
+
+planet_orbits.o: \
+	../include/jplhdr.h90 \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	../suit/planet_masses.mod 
+
+prdnod.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	planet_orbits.o \
+	pldata.h90 
+
+prextrdn.o: \
+	rkg_local.o 
+
+proutele.o: \
+	../suit/fund_const.mod \
+	pldata.h90 
+
+prsalto.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	kantorovich.o \
+	pldata.h90 
+
+prsector.o: \
+	../suit/fund_const.mod 
+
+prsingeq.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	neoopt.h90 \
+	planet_orbits.o \
+	pldata.h90 \
+	right_hand_side.o \
+	rkg_local.o 
+
+prsingopt.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	pldata.h90 
+
+prstop.o: \
+	../suit/fund_const.mod \
+	pldata.h90 
+
+rad02pi.o: \
+	../suit/fund_const.mod 
+
+read_pla.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	planet_orbits.o \
+	pldata.h90 
+
+rhsloop.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	planet_orbits.o \
+	pldata.h90 
+
+right_hand_side.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	pldata.h90 
+
+rkg_local.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	planet_orbits.o \
+	pldata.h90 
+
+sec_evol.o: \
+	../propag/dyn_param.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	../suit/output_control.mod \
+	neoopt.h90 \
+	pldata.h90 \
+	rkg_local.o 
+
+test_pla.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	planet_orbits.o \
+	pldata.h90 
+
+vastdat2fla.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 
+
+vpladat2fla.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 

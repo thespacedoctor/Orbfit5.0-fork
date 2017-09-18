@@ -1,0 +1,5 @@
+! integrator parameters
+! parametri integratore numerico
+      INTEGER isrk
+      DOUBLE PRECISION eprk,epnod
+      COMMON/neooptio/eprk,epnod,isrk

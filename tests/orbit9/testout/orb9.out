@@ -1,0 +1,14 @@
+; orbit9 vers. c, output file
+ in input            7  planets: KEP HEL ECLM00
+barycenter corr.flag  1 no. inner pla.   1
+; planetary inverse masses as used
+  9.9999983398861247D-01  4.0852371865829983D+05  3.2890055981024762D+05
+  3.0987035902907075D+06  1.0473486254633374D+03  3.4979017677866345D+03
+  2.2902981613087039D+04  1.9412259775973071D+04
+  planetary initial conditions as read
+   1  asteroids required,   1  with LCE; numbers:
+  223001   
+  asteroid 223001     OK
+  file end looking for 223001              record            2
+  input complete, starting from t=   0.0000000000000000     
+ end orbit8v, time =         20000.0000

@@ -1,0 +1,32 @@
+In questa directory c'e' la seconda versione del programma
+propneo per il calcolo degli elementi propri dei NEA's
+
+
+Cambiamenti rispetto alla prima versione
+
+1) ho modificato     epsabs da 0.d0   in 1.d-8 
+              ed     epsrel da 1.d-11 in 1.d-5
+   in tutte le routine che chiamano la libreria di quadpack
+   (questo cambiamento ha consentito di velocizzare notevolmente il calcolo)
+
+
+2) il calcolo dell'integrale approssimato va fatto mediante
+   passaggio a coord. polari
+   (in questo modo il procedimento di regolarizzazione e' corretto)
+
+
+3) La definizione di Z e' stata corretta aggiungendo il fattore 
+   moltiplicativo ky
+
+4) i domini di integrazione sono stati scelti in modo piu' astuto di prima,
+   anche perche' prima c'era una singolarita' creata proprio dalla
+   scelta del dominio e non eliminata
+
+
+5) gran parte dei calcoli che potevano essere svolti al di fuori delle
+   functions ffG ffo ffZ sono stati spostati per ottimizzare i tempi.
+
+6) la programmazione e' in generale piu' strutturata di prima
+
+
+7) sono state eliminate alcune variabili inutili (ngrex, ngrox)

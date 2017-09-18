@@ -1,0 +1,13 @@
+! Options for VPHA_nonlin.x 
+
+IERS.
+        .extrapolation=.T.
+
+virpha.
+        .obsdir='obsdata'       ! directory for observations
+        .eledir='orbits'	! directory of orbit elements
+        .imult=3                ! number of multiple solutions per side
+        .sigma=3.               ! sigma interval for multiple solutions
+!        .wr_screen=.F.         ! write on screen
+!        .chk_der=.F.           ! check derivatives in covariance propagation
+
