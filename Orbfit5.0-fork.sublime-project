@@ -1,0 +1,10 @@
+{
+  "folders": [ { "path": "/Users/Dave/git_repos/Orbfit5.0-fork" } ],
+  "settings": {
+      "python_test":{
+          "command": "/Users/Dave/.virtualenvs/Orbfit5.0-fork/bin/nosetests",
+          "working_dir": "/Users/Dave/git_repos/Orbfit5.0-fork/Orbfit5.0-fork",
+          "color_scheme": "dark"
+    }
+  }
+}
