@@ -1,0 +1,16 @@
+INPUT: propag.def
+
+init_orbdet.
+	.methods = Gauss Vaisala	
+	.verbose = 2
+
+fitobs.
+	.prob_sampl=.false.
+	.dmeacontr=0.2d0
+! cobweb
+	.cob_ndir=50     ! number of columns/directions (def. 100)
+        .cob_np=50       ! number of rows/points in ray (def.100)
+        .ndir_grid=100   ! number of columns/directions in the densified grid (def. 100)
+        .np_grid=100     ! number of rows/points in ray in the densified grid (def.100)
+        .cob_sigx=5.d0   ! sigma max in cobweb (def. 5.0)
+        .cob_hmax=34.5d0 ! max absolute magnitude

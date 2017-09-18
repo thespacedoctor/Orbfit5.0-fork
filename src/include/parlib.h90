@@ -1,0 +1,2 @@
+! Default library directory
+CHARACTER(LEN=100), PARAMETER :: dlibd = '/Users/Dave/Orbfit5.0/lib'

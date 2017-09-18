@@ -1,0 +1,11 @@
+! Options for neofit.x 
+propne.
+        .neolist='propneo.names'! list of asteroid names
+!        .tcur=51200.		! "current" time for propagation
+        .eledir='epoch'		! directory of orbit elements
+!	.obsdir0='mpcobs'	! location of obsfiles
+!	.generate_catalog=.T.	! Flag for generating single line catalog
+!	.generate_closeapp=.T.	! Flag for generating close approach data
+!	.generate_ephem=.F.	! Flag for generating ephemeris file
+!	.generate_moid =.F.	! Flag for generating moid file
+!

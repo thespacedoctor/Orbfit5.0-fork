@@ -1,0 +1,35 @@
+ number of perturbers =            0
+ binary ephemerides file= CPV
+ perturbing asteroids used: none
+ ngr_opt =  F
+ first arc asteroid name default value= !inputfileforf
+ not a designation default value  F
+ second arc asteroid name default value= 
+ error model file default value= 
+ number of columns/directions =           50
+ number of rows/points in ray =           50
+ number of columns/directions in the densified grid =          100
+ number of rows/points in ray in the densified grid =          100
+ sigma max in cobweb =    5.0000000000000000     
+ max absolute magnitude =    34.500000000000000     
+ use b-plane as target plane default value  T
+ mass given in a separate file default value  F
+ limit eccentricity default value    0.0000000000000000     
+ max semimajor axis default value    0.0000000000000000     
+ min semimajor axis default value    0.0000000000000000     
+ max aphelion default value    0.0000000000000000     
+ min perihelion default value    0.0000000000000000     
+ max perihelion default value    0.0000000000000000     
+ shrink of Earth cross section default value    1.0000000000000000     
+ use of constant steps in IP is  F
+ max dist. for inclolinctp =   0.20000000000000001     
+  INPUT OF OBSERVATIONAL DATA, ARC 1
+ first object obs. file name default value= !inputfileforf
+ first object obs. directory name default value= obsdata
+  INPUT OF OBSERVATIONAL DATA, ARC 2
+ second object obs. file name default value= 
+  INPUT OF ORBITAL ELEMENTS, ARC 1
+ first arc asteroid name default value= !inputfileforf
+ first arc elements file default value= ast.cat
+ File ast.cat not found!
+  INPUT OF ORBITAL ELEMENTS, ARC 2

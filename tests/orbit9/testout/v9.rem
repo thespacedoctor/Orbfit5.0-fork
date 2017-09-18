@@ -1,0 +1,27 @@
+ Mean motion res, zero ecc/incl, iterat failure warnings
+ vers.  8.3.1 (Euler+reverse) Pisa, May 1997                       
+ ast.no, i+b13, i+b12, b15, b17, b14, b16, cfac, per(yr) - or
+ zero e/sI warning,procedure, no(tt), mean elements - or
+ ast.no,  iter,  delta a - or
+ iteration failure warning
+
+1          2  0.2515D-06
+2          2  0.1686D-05
+3          1  0.4208D-05
+4          1  0.3010D-05
+5          2  0.5887D-05
+6          1  0.4839D-05
+7          1  0.4036D-05
+8          1  0.3380D-06
+9          1  0.5059D-06
+10         2  0.2864D-05
+11         2  0.2834D-07
+12         1  0.7517D-06
+13         2  0.1301D-05
+14         2  0.1656D-05
+15         2  0.4121D-07
+16         2  0.1182D-06
+17         2  0.2304D-05
+18         1  0.1901D-05
+19         2  0.6739D-07
+20         1  0.5682D-05

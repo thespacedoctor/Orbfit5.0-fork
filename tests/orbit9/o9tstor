@@ -1,0 +1,14 @@
+mkdir $2
+gzip $1ast.fil
+mv  -i $1ast.fil.gz $2
+gzip vpla.fil
+mv -i vpla.fil.gz $2/$1pla.fil.gz
+mv -i orb9t.out $2/$1o9t.out
+gzip orb9.dm*
+gzip $1o9t.sum
+mv -i orb9.dma.gz $2/$1o9.dma.gz
+mv -i orb9.dmp.gz $2/$1o9.dmp.gz
+mv -i orb9.num $2/$1o9.num
+mv -i orb9.clo $2/$1o9.clo
+mv -i $1o9t.sum.gz $2
+cp -i orb9t.opt $2/$1o9t.opt

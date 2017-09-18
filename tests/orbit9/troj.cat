@@ -1,0 +1,7 @@
+format  = 'OEF2.0'       ! file format
+rectype = '1L'           ! record type (1L/ML)
+elem    = 'KEP'          ! type of orbital elements
+refsys  = ECLM J2000     ! default reference system
+END_OF_HEADER
+! Name, Epoch(MJD), a, e, i, long. node, arg. peric., mean anomaly
+'588'          57400.000000   5.2059231305738258E+00   1.4704132211394952E-01   1.0315179745998686E+01   3.1656304381885167E+02   1.3357948496157056E+02   1.3859699981231483E+02  8.19  0.15  0

@@ -1,0 +1,57 @@
+
+candidate_PNEAs.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	perturbing_function.o 
+
+dmintil_deriv.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	right_hand_side.o 
+
+mindist.o: \
+	../suit/fund_const.mod \
+	../suit/output_control.mod 
+
+perturbing_function.o: \
+	../suit/fund_const.mod \
+	perturbing_function.o 
+
+placros_NEAs.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	perturbing_function.o 
+
+planet_dist.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	../suit/output_control.mod \
+	plamas.h90 \
+	planetorb_circ.o \
+	right_hand_side.o \
+	secular_evolution.o 
+
+planetorb_circ.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 
+
+possible_PNEAs.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	../suit/output_control.mod 
+
+propag_PNEAs.o: \
+	../propag/critical_points.mod \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod \
+	../suit/output_control.mod \
+	secular_evolution.o 
+
+right_hand_side.o: \
+	../propag/orbit_elements.mod \
+	../suit/fund_const.mod 
+
+secular_evolution.o: \
+	../suit/fund_const.mod 

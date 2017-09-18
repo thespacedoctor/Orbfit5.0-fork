@@ -1,0 +1,141 @@
+*********************************************************************
+Descrizione della procedura per ottenere i VAs e calcolare
+l'intervallo di possibili tempi di incrocio tramite estrapolazione
+lineare con la derivata secolare di dmin
+*********************************************************************
+
+in sec_evol/
+
+VAs.x  
+(produce i files *.eq1, indicizzati, con le orbite dei VAs)
+WARNING! si dovrebbero chiamare eq0, a vedere il loro tempo
+mkdir astname/
+
+% per produrre la figura con la linearizzazione dell'evoluzione 
+% secolare del MOID dei VAs
+crossing_times_lin_1979XB.m
+
+% per produrre la figura con l'evoluzione secolare del moid dei VAs
+VAsecevol.sh astname
+(produce i files *.sec, indicizzati, dell'evoluzione secolare
+
+dmint_evol.sh astname
+(produce i files dmin_*.fla, con i valori di dmin e della sua derivata)
+
+plot figures
+cd astname/
+dmin_evol.m; per adesso funziona solo dmin_evol_1979XB.m
+
+
+***********************************************************************
+Descrizione dei passi per produrre le figure di evoluzione secolare e
+confrontarle con l'integrazione numerica pura.
+***********************************************************************
+1) generazione e spostamento dati
+
+  in tests/orbit9/  
+       in inbaric.opt ci deve essere lo stesso tempo del file .cat
+       inbarmerc.x (produce barmerxx.inc allplmxx.inc)
+       pvensat.pl <epoch> (to generate pvensat.inc from allplmxx.inc)
+       sistemare il file di opzioni orb9.opt
+       orbit9.x            (genera vast.fil vast.dat)
+
+  in tests/sec_evol/
+       sec_evol.x <nome>   (genera il file sec di evoluzione secolare)
+
+  mkdir <nome>
+  cd <nome>
+  mv ../<nome>.sec .;
+  mv ../../orbit9/vast.fil .;
+  mv ../../orbit9/vast.dat .;
+
+2) generazione figure
+  ln -s ../scripts/comp_evol.sh
+  comp_evol.sh <nome>
+
+  lanciare matlab
+  comp_evol_fil.m
+  comp_evol_dat.m
+
+--------------------------------------------------------------------
+Per generare un evoluzione numerica piu' adatta al confronto creiamo
+dei cloni sia dell'orbita dell'asteroide che di quelle dei pianeti,
+con degli shift delle anomalie medie
+
+1b) generazione e spostamento dati
+
+  in tests/orbit9/clones  
+       creare il file <nome>.cat  prendendo da neodys.cat
+
+  in tests/orbit9
+       in inbaric.opt ci deve essere lo stesso tempo <catepoch> 
+       del file clones/<nome>.cat
+       orb9.sh  <nome> <ncloni> <catepoch>   (genera vast_*.fil vast_*.dat)
+
+  in tests/sec_evol/
+       sec_evol.x <nome>   (genera il file sec di evoluzione secolare)
+
+       mkdir <nome>
+       cd <nome>
+       mv ../<nome>.sec .;
+       ln -s ../scripts/cleanup.sh;
+       cleanup.sh;	   
+       mv ../../orbit9/vast_*.dat .;
+
+2b) generazione figure (comparison between secular and 
+    mean numerical evolutions)
+       ln -s ../scripts/comp_evol_clones.sh
+       comp_evol_clones.sh <nome> <ncloni**2>
+
+    lanciare matlab
+       comp_evol_dat.m
+
+
+***********************************************************************
+Descrizione dei passi per produrre le figure di confronto tra l'evoluzione 
+del MOID data dall'integrazione numerica pura e l'evoluzione secolare
+***********************************************************************
+   in tests/orbit9
+   orbit9.x <nome>    (vedi sopra per le opzioni)
+   mv vast.dat ../sec_evol/<nome>/
+   mv vpla.dat ../sec_evol/<nome>/
+
+   in tests/sec_evol
+   sec_evol.x <nome>
+
+   ln -s ../scripts/comp_dmint.sh
+   comp_dmint.sh <nome>           
+% per raffinare il passo cambiare nstep in dmint_evol.f90
+ 
+   cd <nome>
+   ln -s ../mlab/dmincross.m
+
+   lanciare matlab
+   dmincross.m
+
+
+** CONTROLLATO FINO A QUI ***
+
+***********************************************************************
+Descrizione dei passi per produrre le figure di confronto tra l'evoluzione 
+secolare nel caso generale (pianeti su orbite ellittiche inclinate)
+e l'evoluzione secolare del problema circolare coplanare.
+***********************************************************************
+ a) evoluzione elementi orbitali
+   
+   ln -s ../scripts/comp_circ.sh
+   comp_circ.sh <nome>
+
+   lanciare matlab
+   comp_circ.m
+
+ b) nel piano (omega,e)
+
+   ln -s mevcirc.fla singeq.mev
+   
+   lanciare matlab
+   label_media02pi.m OPPURE label_media3pi.m
+   singeq
+   
+   plot(omc,ec); (circular secular evolution)
+   plot(omse,ese); (secular evolution)   

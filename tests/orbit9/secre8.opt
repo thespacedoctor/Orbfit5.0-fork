@@ -1,0 +1,6 @@
+     301    NGRID
+       2    ISEL 1=eI 2=aI 3=ae
+    2.1000    2.5000     range in a (AU)
+    0.1500    0.3000     range in e
+    0.000    30.0000     range in I (deg)
+  90.0000    90.0000     arg.peric, long.node (degrees)

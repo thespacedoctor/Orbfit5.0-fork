@@ -1,0 +1,19 @@
+
+14/10/2010
+
+1) spostato in notused il file rkcoef.h90
+
+2) prrkg.f90:     spostata la riga  yat(i)=y(i)+h*de  dopo ENDDO
+                   
+3) risolta ambiguita'   a=semiasse 
+                        a(,) matrice per rkg
+   nel modulo rkg_local.f90
+
+4) in  kintrp scambiato ordine ck1,ck (per mantenere il significato 
+   che essi hanno in rkgstep)
+ 
+
+============================================================
+*** PROBLEMI ***
+
+in /suit c'e' la routine pla_dat.f con i semiassi dei pianeti senza .d0
