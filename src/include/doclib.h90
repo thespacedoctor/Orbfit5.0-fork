@@ -3,4 +3,4 @@
 ! ---------------------------------------------------------------------
 ! Default documentation directory
 CHARACTER*100 ddocd
-PARAMETER (ddocd=  '/Users/Dave/git_repos/Orbfit5.0-fork/doc')
+PARAMETER (ddocd=  '/Users/Dave/Orbfit5.0/doc')
