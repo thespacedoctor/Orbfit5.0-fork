@@ -1,4 +1,14 @@
 
+ephem.o: \
+	../propag/dyn_param.mod \
+	../propag/orbit_elements.mod \
+	../suit/astrometric_observations.mod \
+	../suit/file_oper.mod \
+	../suit/fund_const.mod \
+	../suit/output_control.mod \
+	ofod.o \
+	rdopt_of.o 
+
 ofclrf.o: \
 	../suit/output_control.mod 
 
