@@ -3,7 +3,7 @@
 # Fortran compiler
 FC=gfortran
 # Options for Fortran compiler:
-FFLAGS= -O3 -I../include 
+FFLAGS= -O3 -I../include -Wl,-rpath,${CONDA_PREFIX}/lib
 # "ranlib" command: if it is not needed, use "RANLIB=touch"
 RANLIB=ranlib
 VPATH=../include
