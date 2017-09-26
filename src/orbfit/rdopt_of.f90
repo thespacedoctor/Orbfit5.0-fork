@@ -226,7 +226,7 @@ CONTAINS
 ! Timescale
     ephtsc='TDT'
     CALL rdncha('ephem.','timescale',ephtsc,.false.,found,fail1,fail)
-    
+
 ! Output fields
 !    ephfld='cal,coord,delta,r,elong,phase,mag'
     ephfld='cal,mjd,coord,mag,elev,airm,elsun,elong,mooel,glat,glon,r,delta,appmot,skyerr'

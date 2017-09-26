@@ -2,7 +2,7 @@ MODULE ephem_prop
   USE dyn_param
   IMPLICIT NONE
   PRIVATE
-  PUBLIC :: fstpro, fsteph,ephemc 
+  PUBLIC :: fstpro, fsteph,ephemc, ephemc_stdout
 CONTAINS
 ! ============ephem_prop===================                             
 ! PUBLIC ROUTINES:                                                      
@@ -450,7 +450,7 @@ SUBROUTINE ephemc(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,unitmax,mjdca
      ELSEIF(field(i).EQ.'coord') THEN 
         IF(frameo.EQ.'EQUATORIAL') THEN 
            head1(lh+1:)='     Equatorial coordinates  ' 
-           head2(lh+1:)='       RA            DEC     ' 
+           head2(lh+1:)='       RAJ2000            DECJ2000     ' 
         ELSEIF(frameo.EQ.'ECLIPTICAL') THEN 
            head1(lh+1:)='      Ecliptic coordinates   ' 
            head2(lh+1:)='    Longitude      Latitude  ' 
@@ -635,7 +635,7 @@ SUBROUTINE ephemc(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,unitmax,mjdca
         CALL filstr('App. motion',cval,lf1+lf2,inb1,0) 
         head1(lh+1:)=cval 
         IF(iepfor.EQ.1) THEN 
-           CALL filstr('RA*cosDE',cval,lf1,inb1,0) 
+           CALL filstr('RA/dt',cval,lf1,inb1,0) 
         ELSE 
            CALL filstr('Vel',cval,lf1,inb1,0) 
         END IF
@@ -645,7 +645,7 @@ SUBROUTINE ephemc(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,unitmax,mjdca
         head4(lh+1:)='  ==================' 
         lh=lh+lf1 
         IF(iepfor.EQ.1) THEN 
-           CALL filstr('DEC',cval,lf2,inb1,0) 
+           CALL filstr('DEC/dt',cval,lf2,inb1,0) 
            head2(lh+1:)=cval 
            CALL filstr(amuni,cval,lf2,inb1,0) 
            head3(lh+1:)=cval 
@@ -923,6 +923,649 @@ SUBROUTINE ephemc(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,unitmax,mjdca
 3 END DO
                                                                         
 END SUBROUTINE ephemc
+
+
+! Copyright (C) 1997-2000 by Mario Carpino (carpino@brera.mi.astro.it)  
+! Version: December 11, 2000                                            
+! --------------------------------------------------------------------- 
+!                                                                       
+!  *****************************************************************    
+!  *                                                               *    
+!  *                         E P H E M C                           *    
+!  *                                                               *    
+!  *                 Computation of ephemerides                    *    
+!  *                                                               *    
+!  *****************************************************************    
+!                                                                       
+! INPUT:    UNIT      -  Output FORTRAN unit                            
+!           EL0       -  Orbital elements, including
+!                        Type of orbital elements (EQU/KEP/CAR/COM)         
+!                        Epoch of orbital elements (MJD, TDT)           
+!                        Orbital elements (ECLM J2000)                  
+!           UNC0      -  Covariance/normal matrix of orbital elements
+!           DEFCOV    -  Tells whether the covariance matrix is defined 
+!           T1        -  Starting time for ephemeris (MJD, TDT)         
+!           T2        -  Ending time for ephemeris (MJD, TDT)           
+!           DT        -  Ephemeris stepsize (d)                         
+!           IDSTA     -  Station identifier                             
+!           SCALE     -  Timescale for output                           
+!           FIELDS    -  Output fields (separated by commas)            
+!                                                                       
+! SUPPORTED OUTPUT FIELDS:                                              
+!     cal       calendar date                                           
+!     mjd       Modified Julian Day                                     
+!     coord     coordinates (RA and DEC, or ecliptic long. and lat.)    
+!     mag       magnitude                                               
+!     delta     distance from the Earth                                 
+!     r         distance from the Sun                                   
+!     elong     Sun elongation angle                                    
+!     phase     Sun phase angle                                         
+!     glat      galactic latitude                                       
+!     appmot    apparent motion                                         
+!     skyerr    sky plane error                                         
+!                                                                       
+SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,unitmax,mjdca) 
+  USE fund_const
+  USE pred_obs
+  USE orbit_elements                 
+  IMPLICIT NONE 
+  
+  INTEGER unit,idsta 
+  CHARACTER*(*),INTENT(IN)   :: scale,fields 
+  TYPE(orbit_elem), INTENT(IN) :: el0
+  TYPE(orb_uncert), INTENT(IN) :: unc0
+  INTEGER, INTENT(IN),OPTIONAL :: unitmax
+  DOUBLE PRECISION, INTENT(IN),OPTIONAL :: mjdca 
+  DOUBLE PRECISION t1,t2,dt
+
+  LOGICAL defcov 
+                                                                        
+  DOUBLE PRECISION, PARAMETER :: epst=1.d-6 
+
+! Max number of output fields                                           
+  INTEGER, PARAMETER :: nfx=30 
+! Max number of ephemeris points                                        
+  INTEGER, PARAMETER :: nephx=100000 
+! Max length of output records                                          
+  INTEGER, PARAMETER :: lrx=400 
+                                         
+  INTEGER nf,lh,ider,i,lf,lr,day,month,year,ia,ma,id,md,ls,neph,k,ip 
+  INTEGER srtord(nephx),lrv(nephx),iepfor,la,lad,lfo,lf1,lf2 
+  INTEGER inb1,inb2,inl 
+  CHARACTER*(1), PARAMETER :: obstyp='O'       
+  DOUBLE PRECISION tdt,alpha,delta,mag,maxmag,maxmagrec,hour,sa,sd,difft,signdt,cvf 
+  DOUBLE PRECISION alpha1,delta1,mag1,gamad1(2,2) ! for test comparison
+  DOUBLE PRECISION gamad(2,2),sig(2),axes(2,2),err1,err2,pa 
+  DOUBLE PRECISION teph(nephx),velsiz, cosangzen, airmass 
+  CHARACTER*1 siga,sigd,anguni 
+  CHARACTER*3 cmonth(12) 
+  CHARACTER*20 field(nfx),frameo,amuni,amunid,amfor,name
+  CHARACTER*190 h
+  CHARACTER*190 results
+  CHARACTER*(lrx) head1,head2,head3,head4,outrec,recv(nephx),blank,maxrec 
+  CHARACTER cval*80 
+  LOGICAL outmot,outerr,outmag,oldrst,found,fail1,fail,usexp 
+! Time conversion (added by Steve Chesley)                              
+  INTEGER mjdt,mjdout 
+  DOUBLE PRECISION sect,secout,tout 
+  DOUBLE PRECISION :: adot,ddot ! proper motion
+! phase, distance to Earth, distance to Sun, solar elongation, galactit lat. and longitude, 
+! elevation, elevation sun, lunar elongation
+  DOUBLE PRECISION :: pha,dis,dsun,elo,gallat,gallon,elev,elsun, elmoon 
+  INTEGER lench 
+  LOGICAL sub_ast_station_light, umbra, penumbra,max_bright_exist
+  EXTERNAL lench 
+                                                                        
+  DATA cmonth/'Jan','Feb','Mar','Apr','May','Jun',                  &
+     &            'Jul','Aug','Sep','Oct','Nov','Dec'/                  
+                                                                        
+  inb1=3 
+  inb2=2                                                                    
+  max_bright_exist=.FALSE.
+! Parameter which should become options                                 
+  frameo='EQUATORIAL' 
+  signdt=1 
+  IF(dt.LT.0) signdt=-1 
+! List of ephemeris epochs                                              
+  neph=0 
+  tdt=t1 
+! set maxmagrec
+  maxmagrec=200d0
+2 CONTINUE 
+  difft=signdt*(tdt-t2) 
+  IF(difft.LE.epst) THEN 
+     neph=neph+1 
+     IF(neph.GT.nephx) STOP '**** ephemc: neph > nephx ****' 
+     teph(neph)=tdt 
+     tdt=t1+neph*dt 
+     GOTO 2 
+  END IF
+! Sorting of ephemeris epochs                                           
+  CALL srtept(teph,neph,el0%t,srtord) 
+                                                                        
+! List of output fields                                                 
+  CALL spflds(fields,field,nf,nfx) 
+                                                                        
+! COMPOSITION OF HEADER LINES                                           
+  head1=' ' 
+  head2=' ' 
+  head3=' ' 
+  head4=' ' 
+  blank=' ' 
+  lh=0 
+  outmot=.false. 
+  outerr=.false. 
+  ider=0 
+                                                                        
+  DO 5 i=1,nf 
+     IF(field(i).EQ.'cal') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='    Date      Hour ' 
+        ls=lench(scale) 
+        WRITE(head3(lh+1:),300) scale(1:ls) 
+        head4(lh+1:)=' =========== ======' 
+        lh=lh+19 
+     ELSEIF(field(i).EQ.'mjd') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='mjd,' 
+        ls=lench(scale) 
+        WRITE(head3(lh+1:),301) scale(1:ls) 
+        head4(lh+1:)=' ============' 
+        lh=lh+5 
+     ELSEIF(field(i).EQ.'coord') THEN 
+        IF(frameo.EQ.'EQUATORIAL') THEN 
+           head1(lh+1:)='     Equatorial coordinates  ' 
+           head2(lh+1:)='ra_deg,dec_deg,' 
+           head3(lh+1:)='decimal_deg,decimal_deg,' 
+        ELSEIF(frameo.EQ.'ECLIPTICAL') THEN 
+           head1(lh+1:)='      Ecliptic coordinates   ' 
+           head2(lh+1:)='    Longitude      Latitude  ' 
+        ELSE 
+           lf=lench(frameo) 
+           WRITE(*,331) frameo(1:lf) 
+           STOP '**** ephemc: Abnormal end ****' 
+        END IF
+        head3(lh+1:)='    h  m  s        d  ''  "   ' 
+        head4(lh+1:)='  =============  ============' 
+        lh=lh+16 
+     ELSEIF(field(i).EQ.'delta') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='observer_distance,' 
+        head3(lh+1:)='au' 
+        head4(lh+1:)=' =======' 
+        lh=lh+20 
+     ELSEIF(field(i).EQ.'r') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='heliocentric_distance,' 
+        head3(lh+1:)='au' 
+        head4(lh+1:)=' =======' 
+        lh=lh+23
+     ELSEIF(field(i).EQ.'deltaHP') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='   Delta,  ' 
+        head3(lh+1:)='    (au)   ' 
+        head4(lh+1:)=' ==========' 
+        lh=lh+11 
+     ELSEIF(field(i).EQ.'rHP') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='     R,    ' 
+        head3(lh+1:)='    (au)   ' 
+        head4(lh+1:)=' ==========' 
+        lh=lh+11 
+     ELSEIF(field(i).EQ.'elsun') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='  Sun, ' 
+        head3(lh+1:)='  elev.' 
+        head4(lh+1:)=' ======' 
+        lh=lh+7 
+     ELSEIF(field(i).EQ.'elong') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='sun_obs_target_angle,' 
+        head3(lh+1:)='decimal_deg' 
+        head4(lh+1:)=' ======' 
+        lh=lh+22
+     ELSEIF(field(i).EQ.'mooel') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)=' LunEl,' 
+        head3(lh+1:)='  (deg)' 
+        head4(lh+1:)=' ======' 
+        lh=lh+7 
+     ELSEIF(field(i).EQ.'phase') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='phase_angle,' 
+        head3(lh+1:)='decimal_deg' 
+        head4(lh+1:)=' ======' 
+        lh=lh+12
+     ELSEIF(field(i).EQ.'sub_ast_l') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='  S-A L.,' 
+        head3(lh+1:)='         ' 
+        head4(lh+1:)=' ========' 
+        lh=lh+9 
+     ELSEIF(field(i).EQ.'umbra') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='  Umbra,' 
+        head3(lh+1:)='        ' 
+        head4(lh+1:)=' =======' 
+        lh=lh+8 
+     ELSEIF(field(i).EQ.'penumbra') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)=' Penumbra,' 
+        head3(lh+1:)='         ' 
+        head4(lh+1:)=' ========' 
+        lh=lh+9 
+      ELSEIF(field(i).EQ.'mag') THEN 
+        outmag=(el0%h_mag.GT.-100.d0) 
+        IF(outmag) THEN 
+           head1(lh+1:)=blank 
+           head2(lh+1:)='apparent_mag,' 
+           head3(lh+1:)='      ' 
+           head4(lh+1:)=' =====' 
+           lh=lh+14
+        END IF
+     ELSEIF(field(i).EQ.'magHP') THEN 
+        outmag=(el0%h_mag.GT.-100.d0) 
+        IF(outmag) THEN 
+           head1(lh+1:)=blank 
+           head2(lh+1:)='mag,' 
+           head3(lh+1:)='        ' 
+           head4(lh+1:)=' =======' 
+           lh=lh+8 
+        END IF
+     ELSEIF(field(i).EQ.'maxmag') THEN 
+        outmag=(el0%h_mag.GT.-100.d0) 
+        IF(outmag) THEN 
+           head1(lh+1:)=blank 
+           head2(lh+1:)='maximum_mag,' 
+           head3(lh+1:)=' Max Bright ' 
+           head4(lh+1:)=' ===========' 
+           lh=lh+12 
+        END IF
+     ELSEIF(field(i).EQ.'elev') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='  Alt,' 
+        head3(lh+1:)=' (deg)' 
+        head4(lh+1:)=' =====' 
+        lh=lh+6 
+     ELSEIF(field(i).EQ.'airm') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)=' Airmass,' 
+        head3(lh+1:)='         ' 
+        head4(lh+1:)=' ========' 
+        lh=lh+9 
+     ELSEIF(field(i).EQ.'glat') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)='galactic_latitude,' 
+        head3(lh+1:)='decimal_deg' 
+        head4(lh+1:)=' =====' 
+        lh=lh+19
+     ELSEIF(field(i).EQ.'glon') THEN 
+        head1(lh+1:)=blank 
+        head2(lh+1:)=' Glon,' 
+        head3(lh+1:)=' (deg)' 
+        head4(lh+1:)=' =====' 
+        lh=lh+6 
+     ELSEIF(field(i).EQ.'skyerr') THEN 
+        IF(defcov) THEN 
+           outerr=.true. 
+           ider=1 
+           head1(lh+1:)=blank 
+           head2(lh+1:)='       Sky plane error    ' 
+           head3(lh+1:)='     Err1      Err2    PA ' 
+           head4(lh+1:)='  ========  ======== =====' 
+           lh=lh+26 
+        END IF
+     ELSEIF(field(i).EQ.'appmot') THEN 
+        fail=.false. 
+! Default format for apparent motion:
+! IEPFOR = 1 -> (Vx, Vy)                                                
+! IEPFOR = 2 -> (V, PosAng)                                             
+        iepfor=1 
+! sv2int: Translation of string-valued keywords to integer
+        CALL sv2int('ephem.appmot.','format',cval,iepfor,.false.,found,fail1,fail)                                 
+        amunid='"/min' 
+        amuni=amunid 
+        CALL rdncha('ephem.appmot.','units',amuni,.false.,found,fail1,fail)                                 
+        IF(fail) STOP '**** ephemc: abnormal end ****' 
+! CVF = conversion factor from rad/d to selected unit                   
+        CALL angvcf(amuni,cvf,fail) 
+        IF(fail) THEN 
+           la=lench(amuni) 
+           lad=lench(amunid) 
+           WRITE(*,320) amuni(1:la),amunid(1:lad) 
+           amuni=amunid 
+           CALL angvcf(amuni,cvf,fail) 
+           IF(fail) STOP '**** ephemc: internal error (01) ****' 
+        END IF
+        la=lench(amuni) 
+! Choice of the output format: normally F format is preferred           
+        amfor='(F10.4,'','')' 
+! LFO = length of the output string                                     
+        lfo=10 
+        usexp=.false. 
+! Check whether F format can supply the required dynamic range          
+        IF(1.D0*cvf.GE.500.D0) usexp=.true. 
+        IF(3.D-3*cvf.LE.0.1D0) usexp=.true. 
+! Otherwise use exponential format                                      
+        IF(usexp) THEN 
+           amfor='(1P,E12.4)' 
+           lfo=13 
+        END IF
+        lf1=lfo 
+        IF(iepfor.EQ.1) THEN 
+           lf2=lfo 
+        ELSE 
+           lf2=7 
+        END IF
+        CALL filstr('App. motion',cval,lf1+lf2,inb1,0) 
+        head1(lh+1:)=cval 
+        IF(iepfor.EQ.1) THEN 
+           CALL filstr('ra_arcsec_per_hour,',cval,lf1,inb1,0) 
+        ELSE 
+           CALL filstr('Vel',cval,lf1,inb1,0) 
+        END IF
+        head2(lh+1:)=cval 
+        CALL filstr(amuni,cval,lf1,inb1,0) 
+        head3(lh+1:)=cval 
+        head4(lh+1:)='  ==================' 
+        lh=lh+20
+        IF(iepfor.EQ.1) THEN 
+           CALL filstr('dec_arcsec_per_hour,',cval,lf2,inb1,0) 
+           head2(lh+1:)=cval 
+           CALL filstr(amuni,cval,lf2,inb1,0) 
+           head3(lh+1:)=cval 
+           head4(lh+1:)='  ==================' 
+        ELSE 
+           CALL filstr('PA',cval,lf2,inb2,0) 
+           head2(lh+1:)=cval 
+           CALL filstr('deg',cval,lf2,inb2,0) 
+           head3(lh+1:)=cval 
+           head4(lh+1:)=' =====' 
+        END IF
+        lh=lh+21
+        outmot=.true. 
+     ELSE 
+        lf=lench(field(i)) 
+        WRITE(*,330) field(i)(1:lf) 
+        STOP '**** ephemc: abnormal end ****' 
+     END IF
+     IF(lh.GT.lrx) STOP '**** ephemc: lh > lrx ****' 
+5 END DO
+300 FORMAT('             (',A,') ') 
+301 FORMAT('    (',A,')    ') 
+330 FORMAT('Sorry, I don''t know how to produce field "',A,'"') 
+331 FORMAT('Sorry, I don''t know "',A,'" reference system') 
+320 FORMAT('WARNING(ephemc): I do not know how to use "',A,           &
+     &    '" as units for apparent motion;'/                            &
+     &    17X,'using instead default units "',A,'"')         
+
+  ! WRITE(unit,100) head1(1:lh) 
+  ! WRITE(unit,100) head2(1:lh) 
+! OBJECT NAME
+  head2(lh+1:)='object_name' 
+  lh=lh+15
+
+  h = head2(1:lh) 
+  call StripSpaces(h)
+  WRITE(*,100) h
+  ! WRITE(unit,100) head3(1:lh) 
+  ! WRITE(unit,100) head4(1:lh) 
+100 FORMAT(A) 
+   
+  CALL set_restart(.true.) 
+                                                                        
+! Start loop on ephemeris epochs                                        
+  DO 1 k=1,neph 
+     ip=srtord(k) 
+     tdt=teph(ip) 
+! Numerical integration 
+     inl=1                                                
+     IF(outerr) THEN 
+        CALL predic_obs(el0,idsta,tdt,obstyp,      &
+     &        alpha,delta,mag,inl,                                    &
+     &        UNCERT=unc0,GAMAD=gamad,SIG=sig,AXES=axes,              &
+     &        ADOT0=adot,DDOT0=ddot,DIS0=dis,PHA0=pha,DSUN0=dsun,     &
+     &        ELO0=elo,GALLAT0=gallat,ELEV0=elev,ELSUN0=elsun,        & 
+     &        ELMOON0=elmoon,GALLON0=gallon,SUB_AST_STATION_LIGHT0=sub_ast_station_light, &
+     &        UMBRA0=umbra,PENUMBRA0=penumbra)
+     ELSE 
+        CALL predic_obs(el0,idsta,tdt,obstyp,  &
+     &        alpha,delta,mag,inl,        &
+     &        ADOT0=adot,DDOT0=ddot,DIS0=dis,PHA0=pha,DSUN0=dsun,   &
+     &        ELO0=elo,GALLAT0=gallat,ELEV0=elev,ELSUN0=elsun,   &
+     &        ELMOON0=elmoon,GALLON0=gallon,SUB_AST_STATION_LIGHT0=sub_ast_station_light, &
+     &        UMBRA0=umbra,PENUMBRA0=penumbra)
+     END IF
+     CALL set_restart(.false.) 
+
+!     WRITE(11,111)tdt,alpha,delta,elev,elsun
+!111  FORMAT(f15.8,1x,f12.9,1x,f12.9,1x,f10.5,1x,f10.5)     
+! COMPOSITION OF OUTPUT RECORD                                          
+! Time scale conversion                                                 
+     mjdt=FLOOR(tdt) 
+     sect=(tdt-mjdt)*86400.d0 
+     CALL cnvtim(mjdt,sect,'TDT',mjdout,secout,scale) 
+     tout=secout/86400.d0+mjdout 
+!                                                                       
+     outrec=' ' 
+     lr=0 
+    DO 6 i=1,nf 
+! Calendar date                                                         
+       IF(field(i).EQ.'cal') THEN 
+          CALL mjddat(tout,day,month,year,hour) 
+          IF(month.LT.1 .OR. month.GT.12)                               &
+  &        STOP '**** ephemc: internal error (02) ****'              
+          WRITE(outrec(lr+1:),201) day,cmonth(month),year,hour 
+          lr=lr+19 
+! Modified Julian Day                                                   
+       ELSEIF(field(i).EQ.'mjd') THEN 
+          WRITE(outrec(lr+1:),202) tout 
+          lr=lr+13 
+! Astrometric coordinates                                               
+       ELSEIF(field(i).EQ.'coord') THEN 
+          WRITE(outrec(lr+1:),217) alpha*degrad
+          lr=lr+13 
+          WRITE(outrec(lr+1:),217) delta*degrad
+          lr=lr+13 
+! Distance from the Earth                                               
+       ELSEIF(field(i).EQ.'delta') THEN 
+          WRITE(outrec(lr+1:),204) dis 
+          lr=lr+12 
+! Distance from the Sun                                                 
+       ELSEIF(field(i).EQ.'r') THEN 
+          WRITE(outrec(lr+1:),204) dsun 
+          lr=lr+12 
+! Distance from the Earth                                               
+       ELSEIF(field(i).EQ.'deltaHP') THEN 
+          WRITE(outrec(lr+1:),204) dis 
+          lr=lr+12 
+! Distance from the Sun                                                 
+       ELSEIF(field(i).EQ.'rHP') THEN 
+          WRITE(outrec(lr+1:),204) dsun 
+          lr=lr+12 
+! Sun Elevation
+       ELSEIF(field(i).EQ.'elsun') THEN 
+          WRITE(outrec(lr+1:),212) elsun*degrad 
+          lr=lr+9 
+! Solar elongation                                                      
+       ELSEIF(field(i).EQ.'elong') THEN 
+          WRITE(outrec(lr+1:),212) elo*degrad 
+          lr=lr+9 
+! Lunar elongation                                                      
+       ELSEIF(field(i).EQ.'mooel') THEN 
+          WRITE(outrec(lr+1:),212) elmoon*degrad 
+          lr=lr+9 
+! Solar phase angle                                                     
+       ELSEIF(field(i).EQ.'phase') THEN 
+          WRITE(outrec(lr+1:),212) pha*degrad 
+          lr=lr+9 
+! Magnitude                                                             
+       ELSEIF(field(i).EQ.'mag') THEN 
+          IF(outmag) THEN 
+             WRITE(outrec(lr+1:),205) mag 
+             lr=lr+8
+          END IF
+! Magnitude HP                                                            
+       ELSEIF(field(i).EQ.'magHP') THEN 
+          IF(outmag) THEN 
+             WRITE(outrec(lr+1:),215) mag 
+             lr=lr+9 
+          END IF
+! Max Bright Magnitude HP                                                            
+       ELSEIF(field(i).EQ.'maxmag') THEN 
+          IF(outmag) THEN
+             maxmag=mag-5d0*log10(dis*aukm/(dis*aukm-eradkm))
+             IF(sub_ast_station_light ) THEN
+                maxmag=maxmag+100.00
+             ENDIF
+             WRITE(outrec(lr+1:),216) maxmag 
+             lr=lr+13 
+          END IF
+! Umbra
+       ELSEIF((field(i).EQ.'umbra')) THEN
+          WRITE(outrec(lr+1:),213) umbra 
+          lr=lr+9
+! Penumbra
+       ELSEIF((field(i).EQ.'penumbra')) THEN
+          WRITE(outrec(lr+1:),214) penumbra 
+          lr=lr+10
+! Sub-asteroid location in lighta
+       ELSEIF((field(i).EQ.'sub_ast_l')) THEN
+          WRITE(outrec(lr+1:),214) sub_ast_station_light 
+          lr=lr+10
+
+! Elevation and Airmass
+       ELSEIF(field(i).EQ.'elev') THEN
+          WRITE(outrec(lr+1:),205) elev*degrad
+          lr=lr+7
+       ! Airmass calculation according Young (1994)
+         cosangzen=cos(pig/2-elev)
+         airmass=1.002432d0*cosangzen**2+0.148386d0*cosangzen+0.0096467d0
+         airmass=airmass/(cosangzen**3+0.149864d0*cosangzen**2+0.0102963d0*cosangzen+0.000303978)  
+       ELSEIF(field(i).EQ.'airm') THEN
+          IF(elev.gt.0)WRITE(outrec(lr+1:),209) airmass
+          IF(elev.le.0)WRITE(outrec(lr+1:),211)'    INF  '
+          lr=lr+10
+! Sky plane error                                                       
+       ELSEIF(field(i).EQ.'skyerr') THEN 
+          IF(outerr) THEN 
+             err1=sig(1)*degrad 
+             err2=sig(2)*degrad 
+! correction A. Milani 19/3/2000: remember right ascension increases    
+! from right to left                                                    
+!             pa=ATAN2(axes(2,1),axes(1,1))                             
+             pa=ATAN2(axes(2,1),-axes(1,1)) 
+             anguni='d' 
+             IF(MAX(err1,err2).LT.1.d0) THEN 
+                err1=err1*60 
+                err2=err2*60 
+                anguni='''' 
+                IF(MAX(err1,err2).LT.1.d0) THEN 
+                   err1=err1*60 
+                   err2=err2*60 
+                   anguni='"' 
+                END IF
+             END IF
+             WRITE(outrec(lr+1:),208) err2,anguni,err1,anguni,pa*degrad 
+             lr=lr+27 
+          END IF
+! Galactic latitude                                                     
+       ELSEIF(field(i).EQ.'glat') THEN 
+          WRITE(outrec(lr+1:),220) gallat*degrad 
+          lr=lr+10
+! Galactic longitude
+       ELSEIF(field(i).EQ.'glon') THEN 
+          WRITE(outrec(lr+1:),220) gallon*degrad 
+          lr=lr+10
+! Apparent motion      CORRECTED 9 Jan 2003
+       ELSEIF(field(i).EQ.'appmot') THEN 
+          IF(iepfor.EQ.1) THEN 
+             WRITE(outrec(lr+1:),218) adot*cvf*cos(delta) 
+             lr=lr+lf1+2 
+             WRITE(outrec(lr+1:),218) ddot*cvf 
+             lr=lr+lf2+2  
+          ELSE 
+             velsiz=SQRT((adot*cos(delta))**2+ddot**2)
+             WRITE(outrec(lr+1:),amfor) velsiz*cvf 
+             lr=lr+lf1 
+             pa=ATAN2(adot*cos(delta),ddot) 
+             IF(pa.LT.0.D0) pa=pa+dpig 
+             WRITE(outrec(lr+1:),205) pa*degrad 
+             lr=lr+7 
+          END IF 
+       ELSE 
+          lf=lench(field(i)) 
+          WRITE(*,340) field(i)(1:lf) 
+          STOP '**** ephemc: internal error (04) ****' 
+       END IF
+6   END DO
+! ADD OBJECT NAME
+WRITE(outrec(lr+1:),221) name
+lr=lr+16
+! DRYX: SEE THE FORMAT FLAGS IN THE ABOVE CALCUALTIONS TO DETERMINE PRECISION
+201 FORMAT(I3,1X,A3,I5,F7.3) 
+202 FORMAT(F12.6,',') 
+203 FORMAT(2X,2I3,F7.3,2X,A1,I2,I3,F6.2) 
+204 FORMAT(F11.7,',') 
+205 FORMAT(F7.3,',')   ! DRYX: INCREASED PRECISION
+207 FORMAT(2F8.4,',') 
+208 FORMAT(2(F9.3,A1),F6.1) 
+209 FORMAT(F9.3,',') 
+210 FORMAT(A6,',')
+211 FORMAT(A9,',')
+212 FORMAT(F8.4,',')  ! DRYX: INCREASED PRECISION
+213 FORMAT(4X,L1,3X)
+214 FORMAT(4X,L1,4X)
+215 FORMAT(F8.3,',') 
+216 FORMAT(F12.3,',') 
+217 FORMAT(F12.6,',') 
+218 FORMAT(F10.4,',')
+219 FORMAT(F10.4)
+220 FORMAT(F9.4,',') 
+221 FORMAT(A18,',')
+340 FORMAT(' ERROR: illegal output field "',A,'"') 
+    IF(lr.GT.lrx) STOP '**** ephemc: lr > lrx ****' 
+    recv(ip)=outrec(1:lr) 
+    lrv(ip)=lr 
+    IF(PRESENT(unitmax)) THEN
+       IF(maxmag.LE.maxmagrec) THEN
+          IF(.NOT.umbra.AND..NOT.penumbra) THEN
+!             IF(sub_ast_station_light ) THEN
+!                IF(.NOT.max_bright_exist) THEN
+!                   maxmag=maxmag+100.00
+!                   maxmagrec=maxmag
+!                   maxrec=outrec(1:lr)
+!                   WRITE(maxrec(lr+1:lr+10),"(1X,F9.3)") mjdca
+!                  WRITE(maxrec,"(A28,110X,F9.3)") " Max Brigtness not available", mjdca
+!                ENDIF
+!             ELSE
+                maxmagrec=maxmag
+                maxrec=outrec(1:lr)
+                WRITE(maxrec(lr+1:lr+10),"(1X,F9.3)") mjdca
+                max_bright_exist=.TRUE.
+!             ENDIF
+          ENDIF
+       ENDIF
+    ENDIF
+1 END DO
+
+
+                                                                                                                                              
+! OUTPUT OF EPHEMERIS RECORDS IN THE REQUIRED ORDER                     
+ DO 3 ip=1,neph 
+    lr=lrv(ip) 
+    results = recv(ip)(1:lr) 
+    results = trim(results)
+    call StripSpaces (results)
+
+    WRITE(*,100) results
+3 END DO
+                                                                        
+END SUBROUTINE ephemc_stdout
+
+
+
+
 ! Copyright (C) 1997 by Mario Carpino (carpino@brera.mi.astro.it)       
 ! Version: December 12, 1997                                            
 ! --------------------------------------------------------------------- 
@@ -1047,4 +1690,39 @@ SUBROUTINE outco(iun,gamma,c)
      write(iun,109) (c(i,j),i=1,6) 
   enddo
 END SUBROUTINE outco
+
+subroutine StripSpaces(string)
+    character(len=*) :: string
+    integer :: stringLen 
+    integer :: last, actual
+
+    stringLen = len (string)
+    last = 1
+    actual = 1
+
+
+    do while (actual < stringLen)
+        if (string(last:last) == ' ') then
+            actual = actual + 1
+            string(last:last) = string(actual:actual)
+            string(actual:actual) = ' '
+        else
+            last = last + 1
+            if (actual < last) &
+                actual = last
+        endif
+    end do
+
+    last = last - 1
+    if (string(last:last) == ',') then
+            string(last:last) = ' '
+    endif
+    last = last + 1
+
+end subroutine
+
+
 END MODULE ephem_prop
+
+
+

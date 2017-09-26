@@ -976,7 +976,7 @@ SUBROUTINE input_cha_opt(progna,nameopt,optval,ireq,found,comment,iunout)
   IF(iunout.gt.0)WRITE(iunout,*)comment(1:leco),' default value= ',optval(1:le1)
      ENDIF
   ELSE
-     WRITE(*,*) comment(1:leco),'= ', optval(1:le1) 
+     ! WRITE(*,*) comment(1:leco),'= ', optval(1:le1) 
      IF(iunout.gt.0)WRITE(iunout,*) comment(1:leco),'= ', optval(1:le1)
   ENDIF 
 END SUBROUTINE input_cha_opt
@@ -1052,7 +1052,7 @@ SUBROUTINE input_int_opt(progna,nameopt,optval,ireq,found,comment,iunout)
         IF(iunout.gt.0)WRITE(iunout,*)comment(1:leco),' default value ',optval
      ENDIF
   ELSE
-     WRITE(*,*) comment(1:leco),' = ', optval 
+     ! WRITE(*,*) comment(1:leco),' = ', optval 
      IF(iunout.gt.0)WRITE(iunout,*) comment(1:leco),' = ', optval
   ENDIF 
 END SUBROUTINE input_int_opt
