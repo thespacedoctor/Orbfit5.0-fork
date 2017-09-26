@@ -4816,8 +4816,8 @@ SUBROUTINE rdelem(unit,objnam,nobj,infiles,nfil,deforb,defcn,      &
         REWIND(uniin) 
      END IF
      lfo=lench(form) 
-     IF(form.NE.' ') WRITE(*,102) infil1(1:lf),form(1:lfo) 
-102  FORMAT('Scanning file "',A,'" (format: ',A,')') 
+!      IF(form.NE.' ') WRITE(*,102) infil1(1:lf),form(1:lfo) 
+! 102  FORMAT('Scanning file "',A,'" (format: ',A,')') 
      
 ! Reading file                                                          
      IF(form.EQ.'OEF') THEN 

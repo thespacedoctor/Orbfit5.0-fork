@@ -216,6 +216,7 @@ SUBROUTINE obscoo(idobs,xbf,name, shiftst)
         xbf(i)=xbfv(i,idobs)
      enddo
      name=namev(idobs)
+     ! print *, name
   else
      write(*,101)idobs
 101  format(' obscoo: observatory',i4,' is not listed in file "OBSCODE.dat"')
@@ -227,6 +228,7 @@ SUBROUTINE obscoo(idobs,xbf,name, shiftst)
      enddo
      name='UNKNOWN'
   end if
+
 
 END SUBROUTINE obscoo
 ! ==============================================                        

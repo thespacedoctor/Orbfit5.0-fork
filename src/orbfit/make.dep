@@ -1,4 +1,18 @@
 
+ephem.o: \
+	../include/parcmc.h90 \
+	../include/sysdep.h90 \
+	../propag/dyn_param.mod \
+	../propag/orbit_elements.mod \
+	../suit/astrometric_observations.mod \
+	../suit/char_str.mod \
+	../suit/file_oper.mod \
+	../suit/fund_const.mod \
+	../suit/option_input.mod \
+	../suit/output_control.mod \
+	ofod.o \
+	rdopt_of.o 
+
 ofclrf.o: \
 	../suit/output_control.mod 
 

@@ -19,7 +19,7 @@ MODULE OFOD
   IMPLICIT NONE
   PRIVATE
   
-  PUBLIC :: ofinip, ofiobs, ofiorb, ofinod, ofofit, ofiden, ofprop, ofephe
+  PUBLIC :: ofinip, ofiobs, ofiorb, ofinod, ofofit, ofiden, ofprop, ofephe, ofephe_stdout
 
 ! NEEDED common blocks:
   INCLUDE 'parobx.h90'
@@ -217,13 +217,13 @@ SUBROUTINE ofiorb(unirep,elft,nelft,elf1,nelf1,name,nameo,nobj,elem,elem_unc,def
         RETURN
      ENDIF
      IF(eltype(i).EQ.'KEP') THEN 
-        WRITE(*,100) elemv(1,i),elemv(2,i),(elemv(j,i)*degrad,j=3,6)   
-100     FORMAT(8X,'Semimajor axis     =',1P,E24.16,0P,' au'/          &
-             &       8X,'Eccentricity       =',F20.15/                    &
-             &       8X,'Inclination        =',F18.13,' deg'/             &
-             &       8X,'Long. of node      =',F18.13,' deg'/             &
-             &       8X,'Arg. of pericenter =',F18.13,' deg'/             &
-             &       8X,'Mean anomaly       =',F18.13,' deg')  
+!         WRITE(*,100) elemv(1,i),elemv(2,i),(elemv(j,i)*degrad,j=3,6)   
+! 100     FORMAT(8X,'Semimajor axis     =',1P,E24.16,0P,' au'/          &
+!              &       8X,'Eccentricity       =',F20.15/                    &
+!              &       8X,'Inclination        =',F18.13,' deg'/             &
+!              &       8X,'Long. of node      =',F18.13,' deg'/             &
+!              &       8X,'Arg. of pericenter =',F18.13,' deg'/             &
+!              &       8X,'Mean anomaly       =',F18.13,' deg')  
      ELSEIF(eltype(i).EQ.'COM') THEN
         WRITE(*,104) elemv(1,i),elemv(2,i),(elemv(j,i)*degrad,j=3,5),elemv(6,i) 
 104     FORMAT(8X,'Pericenter distance  =',1P,E23.14,0P,' au'/        &
@@ -968,5 +968,72 @@ END SUBROUTINE ofprop
 1  END DO
    
  END SUBROUTINE ofephe
+
+
+!
+!  *****************************************************************
+!  *                                                               *
+!  *                         O F E P H E                           *
+!  *                                                               *
+!  *                Auxiliary routine for ORBFIT:                  *
+!  *                          ephemerides                          *
+!  *                                                               *
+!  *****************************************************************
+!
+! INPUT:    UNIT      -  FORTRAN unit for output
+!           NAME      -  Object names
+!           DEFORB    -  Orbit definition flag
+!           DEFCOV    -  Orbit covariance definition flag
+!           ELEM      -  Orbital elements
+!           ELEM_UNC  -  Orbital element uncertainty
+!           MASS      -  Object masses
+!           COMELE    -  Comment on orbital elements
+!           NOBJ      -  Number of objects
+!
+ SUBROUTINE ofephe_stdout(unit,name,deforb,defcov,elem,elem_unc,mass,comele,nobj)
+   USE ephem_prop
+
+   INTEGER                          :: unit,nobj
+   TYPE(orbit_elem),DIMENSION(nobj) :: elem
+   TYPE(orb_uncert),DIMENSION(nobj) :: elem_unc
+   DOUBLE PRECISION                 :: mass(nobj)
+   LOGICAL                          :: deforb(nobj),defcov(nobj)
+   CHARACTER(LEN=*)                 :: name(nobj),comele(nobj)
+! NEEDED common blocks:
+
+   
+   INTEGER i,k,ln,lc
+   CHARACTER*100 fields ! ephemerides output 
+   CHARACTER*3 scale
+   
+   INTEGER lench
+   EXTERNAL lench
+   
+   IF(iiceph.NE.36) STOP '**** ofephe_stdout: internal error (01) ****'
+   
+   DO 1 k=1,nepobj
+      i=kepobj(k)
+      IF(i.LT.1 .OR. i.GT.nobj) GOTO 1
+      IF(.NOT.deforb(i)) GOTO 1
+      ln=lench(name(i))
+!       WRITE(*,100) name(i)(1:ln)
+!       WRITE(*,100) name(i)(1:ln)
+! 100   FORMAT(/'Ephemeris for object ',A)
+      lc=lench(comele(i))
+!       IF(lc.GT.0) WRITE(*,101) comele(i)(1:lc)
+! 101   FORMAT(5X,'Origin of orbital elements: ',A)
+!       WRITE(*,102)
+! 102   FORMAT(/)
+      scale='UTC' 
+! old version: fields is set hard-coded
+!      fields='cal,mjd,coord,mag,elev,airm,elsun,elong,mooel,glat,glon,r,delta,appmot,skyerr' 
+!      CALL ephemc(unit,elem(i),elem_unc(i),defcov(i),teph1,teph2,dteph,idsta,scale,fields)
+! new version: fields is read from option files .oop
+      ! print '(a)', name(1)
+      CALL ephemc_stdout(unit,elem(i),elem_unc(i),defcov(i),teph1,teph2,dteph,idsta,scale,ephfld,name(i)(1:ln))
+      
+1  END DO
+   
+ END SUBROUTINE ofephe_stdout
 
 END MODULE OFOD

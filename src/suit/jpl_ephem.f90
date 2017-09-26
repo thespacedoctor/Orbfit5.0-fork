@@ -102,8 +102,8 @@
      &       err=10)                                                    
                                                                         
       read(nrfile,rec=1)ttl,(cnam(k),k=1,oldmax),ss,ncon,au,emrat,ipt,numde,lpt 
-      WRITE(*,155) numde
-155   FORMAT(' JPL planetary ephemerides DE',I3)
+!       WRITE(*,155) numde
+! 155   FORMAT(' JPL planetary ephemerides DE',I3)
       close(nrfile) 
                                                                         
 !  find the number of ephemeris coefficients from the pointers          

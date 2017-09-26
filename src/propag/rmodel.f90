@@ -127,7 +127,7 @@ SUBROUTINE rmodel(rhs0)
 ! Check and controls on iast and filbe
      IF(iast.EQ.0)THEN
         IF(iun_log.ne.0) WRITE(iun_log,*) 'perturbing asteroids used: none'
-        WRITE(*,*) 'perturbing asteroids used: none'
+        ! WRITE(*,*) 'perturbing asteroids used: none'
      ELSEIF(iast.EQ.3)THEN
         IF(filbe.EQ.'')THEN
            WRITE(*,*) 'ERROR! rmodel: iast=', iast,', while filbe=',filbe(1:ll)
@@ -177,7 +177,7 @@ SUBROUTINE rmodel(rhs0)
 ! ====================================================
      CALL rdnlog('propag.','ngr_opt',ngr_opt,.FALSE.,found,fail1,fail)
      IF(iun_log.gt.0)WRITE(iun_log,*) 'ngr_opt = ',ngr_opt
-     WRITE(*,*) 'ngr_opt = ',ngr_opt
+     ! WRITE(*,*) 'ngr_opt = ',ngr_opt
      IF(ngr_opt)THEN
         WRITE(*,*) '   rmodel: overriding the default for ngr_opt, now ', ngr_opt
      END IF

@@ -1,7 +1,7 @@
 include ../make.flags
 include modules.flags
 
-all: orbfit.x
+all: orbfit.x ephem.x
 
 # Auxiliary routines (internal to orbfit)
 ORBAUX=ofod.o rdopt_of.o srtobs.o seltid.o ustsp.o ofclrf.o
@@ -10,8 +10,15 @@ ORBFIT=$(ORBAUX) orbfit.o
 
 ORBFITDEPS=$(ORBFIT) ../lib/libprop.a ../lib/libmoid.a ../lib/libgauss.a ../lib/libsuit.a
 
+EPHEM=$(ORBAUX) ephem.o 
+
+EPHEMDEPS=$(EPHEM) ../lib/libprop.a ../lib/libmoid.a ../lib/libgauss.a ../lib/libsuit.a
+
 orbfit.x: $(ORBFITDEPS) 
 	$(FC) $(FFLAGS) -o orbfit.x $(ORBFITDEPS)
+
+ephem.x: $(EPHEMDEPS) 
+	$(FC) $(FFLAGS) -o ephem.x $(EPHEMDEPS)
 
 depend:
 	../../bin/mkdep90 -I../include -L../suit -L../propag  *.f *.f90 *.h *.h90 > make.dep
