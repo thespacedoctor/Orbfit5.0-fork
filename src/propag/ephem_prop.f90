@@ -964,7 +964,7 @@ END SUBROUTINE ephemc
 !     appmot    apparent motion                                         
 !     skyerr    sky plane error                                         
 !                                                                       
-SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,unitmax,mjdca) 
+SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,obscode,unitmax,mjdca) 
   USE fund_const
   USE pred_obs
   USE orbit_elements                 
@@ -977,6 +977,7 @@ SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,u
   INTEGER, INTENT(IN),OPTIONAL :: unitmax
   DOUBLE PRECISION, INTENT(IN),OPTIONAL :: mjdca 
   DOUBLE PRECISION t1,t2,dt
+  CHARACTER*15 obscode
 
   LOGICAL defcov 
                                                                         
@@ -1000,7 +1001,7 @@ SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,u
   CHARACTER*1 siga,sigd,anguni 
   CHARACTER*3 cmonth(12) 
   CHARACTER*20 field(nfx),frameo,amuni,amunid,amfor,name
-  CHARACTER*190 h
+  CHARACTER*195 h
   CHARACTER*190 results
   CHARACTER*(lrx) head1,head2,head3,head4,outrec,recv(nephx),blank,maxrec 
   CHARACTER cval*80 
@@ -1302,8 +1303,10 @@ SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,u
   ! WRITE(unit,100) head1(1:lh) 
   ! WRITE(unit,100) head2(1:lh) 
 ! OBJECT NAME
-  head2(lh+1:)='object_name' 
-  lh=lh+15
+  head2(lh+1:)='object_name,' 
+  lh=lh+12
+  head2(lh+1:)='obscode' 
+  lh=lh+7
 
   h = head2(1:lh) 
   call StripSpaces(h)
@@ -1499,9 +1502,12 @@ SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,u
           STOP '**** ephemc: internal error (04) ****' 
        END IF
 6   END DO
-! ADD OBJECT NAME
+! ADD OBJECT NAME & OBSCODE
 WRITE(outrec(lr+1:),221) name
+lr=lr+20
+WRITE(outrec(lr+1:),221) obscode
 lr=lr+16
+
 ! DRYX: SEE THE FORMAT FLAGS IN THE ABOVE CALCUALTIONS TO DETERMINE PRECISION
 201 FORMAT(I3,1X,A3,I5,F7.3) 
 202 FORMAT(F12.6,',') 

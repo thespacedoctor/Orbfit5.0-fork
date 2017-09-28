@@ -18,6 +18,7 @@ PROGRAM ephem
   character(len=10) :: time
   character(len=5) :: zone
   logical :: do_time = .false.
+  INTEGER iobs
 
 ! DRYX: FOUND IN 'parobx.h90'
 ! MAX NUMBER OF OBSERVATIONS
@@ -113,6 +114,7 @@ PROGRAM ephem
   LOGICAL                            :: deforb(nobj1x),defcn(nobj1x)
   CHARACTER(LEN=10)                  :: oetype
   CHARACTER(LEN=120)                 :: comele(nobj1x),elft(nifx),elf1(nifx,nobjx)
+  CHARACTER(LEN=3)                   :: iobs_str
 
 ! Non-gravitational perturbations
   INTEGER                            :: nd
@@ -182,6 +184,8 @@ PROGRAM ephem
     end do
   end if
 
+! CONVERT THE OBSCODE
+  call statcode(obscode,iobs)
     
 ! ========================== INITIALIZATION ==========================
   nobj=0
@@ -200,7 +204,8 @@ PROGRAM ephem
   CALL rdstropt(stringInput) 
   stringInput = "ephem.epoch.end = MJD "// mjd //" UTC"
   CALL rdstropt(stringInput) 
-  stringInput = "ephem.obscode =  "// obscode
+
+  write (stringInput, "(A17,I4)") "ephem.obscode =  ", iobs
   CALL rdstropt(stringInput) 
   stringInput = "object1.name =  '" // objname // "'"
   CALL rdstropt(stringInput) 
@@ -469,7 +474,7 @@ PROGRAM ephem
      ! print *, 'comele:', comele
      ! print *, 'nobj -- object number:', nobj
      ! print *, 'nobj1x -- object array size (usually 3):', nobj1x
-     CALL ofephe_stdout(unieph,objname,deforb,defcn,elem,elem_unc,mass,comele,nobj)
+     CALL ofephe_stdout(unieph,objname,obscode,deforb,defcn,elem,elem_unc,mass,comele,nobj)
   END IF
   
   ! CALL ofclrf
@@ -754,6 +759,37 @@ contains
     IF(fail) STOP '**** rdopto_fork: abnormal end ****'
     
   END SUBROUTINE rdopto_fork
+
+! ==============================================                        
+!  statcode, codestat                                                   
+! conversion from/to exadecimal to/from numeric code for observing stati
+! answer to mess done by MPC in April 2002                              
+! ==============================================                        
+  SUBROUTINE statcode(obsstr,iobs) 
+  IMPLICIT NONE 
+! input                                                                 
+  CHARACTER*3 obsstr 
+! output                                                                
+  INTEGER iobs 
+! end interface                                                         
+  CHARACTER*1 alfanum 
+  INTEGER hundreds, temp 
+  LOGICAL isnum 
+  READ(obsstr,100)iobs 
+100 FORMAT(1x,i2) 
+  READ(obsstr,'(A1)')alfanum 
+  IF(isnum(alfanum))THEN 
+     READ(alfanum,'(I1)')hundreds 
+     iobs=iobs+100*hundreds 
+  ELSEIF(alfanum.eq.' ')THEN 
+     iobs=iobs 
+  ELSE 
+     temp=ichar(alfanum) - 55 
+     IF(temp.gt.35) temp = temp - 6 
+     iobs=iobs+100*temp 
+  ENDIF 
+  RETURN 
+  END SUBROUTINE statcode     
 
   
 END PROGRAM ephem

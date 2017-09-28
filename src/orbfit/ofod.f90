@@ -990,7 +990,7 @@ END SUBROUTINE ofprop
 !           COMELE    -  Comment on orbital elements
 !           NOBJ      -  Number of objects
 !
- SUBROUTINE ofephe_stdout(unit,name,deforb,defcov,elem,elem_unc,mass,comele,nobj)
+ SUBROUTINE ofephe_stdout(unit,name,obscode,deforb,defcov,elem,elem_unc,mass,comele,nobj)
    USE ephem_prop
 
    INTEGER                          :: unit,nobj
@@ -1005,6 +1005,7 @@ END SUBROUTINE ofprop
    INTEGER i,k,ln,lc
    CHARACTER*100 fields ! ephemerides output 
    CHARACTER*3 scale
+   CHARACTER*15 obscode
    
    INTEGER lench
    EXTERNAL lench
@@ -1030,7 +1031,7 @@ END SUBROUTINE ofprop
 !      CALL ephemc(unit,elem(i),elem_unc(i),defcov(i),teph1,teph2,dteph,idsta,scale,fields)
 ! new version: fields is read from option files .oop
       ! print '(a)', name(1)
-      CALL ephemc_stdout(unit,elem(i),elem_unc(i),defcov(i),teph1,teph2,dteph,idsta,scale,ephfld,name(i)(1:ln))
+      CALL ephemc_stdout(unit,elem(i),elem_unc(i),defcov(i),teph1,teph2,dteph,idsta,scale,ephfld,name(i)(1:ln),obscode)
       
 1  END DO
    
