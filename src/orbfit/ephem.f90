@@ -267,22 +267,6 @@ PROGRAM ephem
   CALL rdstropt(stringInput) 
   stringInput = "ephem.fields = mjd,coord,mag,delta,r,elong,phase,glat,appmot"
   CALL rdstropt(stringInput) 
-  stringInput = "propag.output_des=.false."
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.ab_mag=.false."
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.iast=0"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.ilun=0"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.imerc=1"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.iplut=0"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.irel=0"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.filbe='CPV'"
-  CALL rdstropt(stringInput) 
   stringInput = "propag.ngr_opt=.FALSE."
   CALL rdstropt(stringInput) 
   stringInput = "propag.iyark=0"
@@ -316,12 +300,6 @@ PROGRAM ephem
   stringInput = "propag.sep_viol=.false."
   CALL rdstropt(stringInput) 
   stringInput = "propag.eta_sep=0.d0"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.iclap=1"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.iaber=1"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.istat=1"
   CALL rdstropt(stringInput) 
   stringInput = "propag.imet=0"
   CALL rdstropt(stringInput) 
@@ -364,8 +342,6 @@ PROGRAM ephem
   stringInput = "propag.lit1_c=10"
   CALL rdstropt(stringInput) 
   stringInput = "propag.iusci=0"
-  CALL rdstropt(stringInput) 
-  stringInput = "propag.npoint=100"
   CALL rdstropt(stringInput) 
   stringInput = "propag.dmea=0.1d0"
   CALL rdstropt(stringInput) 
@@ -503,10 +479,13 @@ contains
 
 
   subroutine print_help()
-    print '(a)', 'usage: ephem [OPTIONS]'
+    print '(a)', 'usage:'
+    print '(a)', '   ephem <obscode> <mjd> <objectName>'
     print '(a)', ''
-    print '(a)', 'Without further options, cmdline prints the date and exits.'
-    print '(a)', ''
+    print '(a)', '   <obscode>:        unpacked code for your observatory'
+    print '(a)', '   <mjd>:            the modified julian date of the ephemeris you wish to generate (UTC)'
+    print '(a)', '   <objectName>:     the ID of the asteroid you wish to generate an ephemeris for (MPC number or name)'
+    print '(a)', '' 
     print '(a)', 'cmdline options:'
     print '(a)', ''
     print '(a)', '  -h, --help        print usage information and exit'
