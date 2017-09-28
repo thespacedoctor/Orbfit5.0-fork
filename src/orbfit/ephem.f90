@@ -212,7 +212,6 @@ PROGRAM ephem
   stringInput = "object1.inc_name =  '" // objname // "'"
   CALL rdstropt(stringInput) 
 
-
 ! HARDWIRED SETTINGS
   stringInput = "operations.init_orbdet = 0"
   CALL rdstropt(stringInput) 
@@ -228,7 +227,7 @@ PROGRAM ephem
   CALL rdstropt(stringInput) 
   stringInput = "object1.inc_files = astorb.dat[BA2]"
   CALL rdstropt(stringInput) 
-  stringInput = "ephem.objects = 1"
+  stringInput = "ephem.objects = 1 2 3"
   CALL rdstropt(stringInput) 
   stringInput = "ephem.step = 1.0"
   CALL rdstropt(stringInput) 
@@ -263,10 +262,7 @@ PROGRAM ephem
   stringInput = "error_model.name='fcct14'"
   CALL rdstropt(stringInput) 
   stringInput = "output.elements='EQU'"
-  CALL rdstropt(stringInput) 
-  stringInput = "ephem.objects = 1"
-  CALL rdstropt(stringInput) 
-  stringInput = "ephem.step = 1.0"
+
   CALL rdstropt(stringInput) 
   stringInput = "ephem.timescale = UTC"
   CALL rdstropt(stringInput) 
