@@ -12,6 +12,8 @@ PROGRAM ephem
   USE dyn_param
   IMPLICIT NONE
 
+  INCLUDE 'parlib.h90' 
+
   character(len=*), parameter :: version = '1.0'
   character(len=32) :: arg
   character(len=8) :: date
@@ -19,6 +21,7 @@ PROGRAM ephem
   character(len=5) :: zone
   logical :: do_time = .false.
   INTEGER iobs
+  INTEGER lenld
 
 ! DRYX: FOUND IN 'parobx.h90'
 ! MAX NUMBER OF OBSERVATIONS
@@ -130,6 +133,7 @@ PROGRAM ephem
   CHARACTER(LEN=40)                  :: objname
   CHARACTER(LEN=15)                  :: obscode, mjd
 
+
   INTEGER lench
   EXTERNAL lench
 
@@ -212,6 +216,12 @@ PROGRAM ephem
   stringInput = "object1.inc_name =  '" // objname // "'"
   CALL rdstropt(stringInput) 
 
+  lenld=lench(dlibd)
+
+  stringInput = "object1.inc_files = " // dlibd(1:lenld) // "/astorb.dat[BA2]"
+  CALL rdstropt(stringInput) 
+
+
 ! HARDWIRED SETTINGS
   stringInput = "operations.init_orbdet = 0"
   CALL rdstropt(stringInput) 
@@ -225,8 +235,7 @@ PROGRAM ephem
   CALL rdstropt(stringInput) 
   stringInput = "object1.obs_dir = ."
   CALL rdstropt(stringInput) 
-  stringInput = "object1.inc_files = astorb.dat[BA2]"
-  CALL rdstropt(stringInput) 
+  
   stringInput = "ephem.objects = 1 2 3"
   CALL rdstropt(stringInput) 
   stringInput = "ephem.step = 1.0"
