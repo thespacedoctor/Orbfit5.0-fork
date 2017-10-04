@@ -824,7 +824,7 @@ END IF
   
       IF(niers.LE.0) STOP '**** ierini: empty EOPC04 files ****' 
       niers1=niers 
-      WRITE(*,201) niers,mjd1,mjd2 
+!      WRITE(*,201) niers,mjd1,mjd2 
   201 FORMAT('Reading IERS time series:'/ &
      &       '        EOPC04 data:',I6,' points (from MJD=',  &
      &       I5,' to MJD=',I5,')')        

@@ -1,6 +1,7 @@
 
 ephem.o: \
 	../include/parcmc.h90 \
+	../include/parlib.h90 \
 	../include/sysdep.h90 \
 	../propag/dyn_param.mod \
 	../propag/orbit_elements.mod \

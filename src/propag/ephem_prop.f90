@@ -1389,19 +1389,19 @@ SUBROUTINE ephemc_stdout(unit,el0,unc0,defcov,t1,t2,dt,idsta,scale,fields,name,o
 ! Sun Elevation
        ELSEIF(field(i).EQ.'elsun') THEN 
           WRITE(outrec(lr+1:),212) elsun*degrad 
-          lr=lr+9 
+          lr=lr+10 
 ! Solar elongation                                                      
        ELSEIF(field(i).EQ.'elong') THEN 
           WRITE(outrec(lr+1:),212) elo*degrad 
-          lr=lr+9 
+          lr=lr+10 
 ! Lunar elongation                                                      
        ELSEIF(field(i).EQ.'mooel') THEN 
           WRITE(outrec(lr+1:),212) elmoon*degrad 
-          lr=lr+9 
+          lr=lr+10 
 ! Solar phase angle                                                     
        ELSEIF(field(i).EQ.'phase') THEN 
           WRITE(outrec(lr+1:),212) pha*degrad 
-          lr=lr+9 
+          lr=lr+10 
 ! Magnitude                                                             
        ELSEIF(field(i).EQ.'mag') THEN 
           IF(outmag) THEN 
@@ -1519,7 +1519,7 @@ lr=lr+16
 209 FORMAT(F9.3,',') 
 210 FORMAT(A6,',')
 211 FORMAT(A9,',')
-212 FORMAT(F8.4,',')  ! DRYX: INCREASED PRECISION
+212 FORMAT(F9.4,',')  ! DRYX: INCREASED PRECISION
 213 FORMAT(4X,L1,3X)
 214 FORMAT(4X,L1,4X)
 215 FORMAT(F8.3,',') 
