@@ -177,7 +177,9 @@ PROGRAM ephem
       stop
   else
     do i = 1, command_argument_count()
+
        call get_command_argument(i, arg)
+
        if (i == 1) then
           obscode = trim(arg)
        else if (i == 2) then
@@ -211,10 +213,23 @@ PROGRAM ephem
 
   write (stringInput, "(A17,I4)") "ephem.obscode =  ", iobs
   CALL rdstropt(stringInput) 
-  stringInput = "object1.name =  '" // objname // "'"
+  
+  stringInput = "object1.name =  " // objname 
   CALL rdstropt(stringInput) 
-  stringInput = "object1.inc_name =  '" // objname // "'"
+  stringInput = "object1.inc_name =  " // objname
   CALL rdstropt(stringInput) 
+
+  if(SCAN(objname, "'") /= 0) then
+    stringInput = "object1.name =  " // objname 
+    CALL rdstropt(stringInput) 
+    stringInput = "object1.inc_name =  " // objname
+    CALL rdstropt(stringInput) 
+  else
+    stringInput = "object1.name =  '" // objname // "'"
+    CALL rdstropt(stringInput) 
+    stringInput = "object1.inc_name =  '" // objname // "'"
+    CALL rdstropt(stringInput) 
+  end if 
 
   lenld=lench(dlibd)
 
@@ -492,7 +507,7 @@ contains
     print '(a)', 'usage:'
     print '(a)', '   ephem <obscode> <mjd> <objectName>'
     print '(a)', ''
-    print '(a)', '   <obscode>:        unpacked code for your observatory'
+    print '(a)', '   <obscode>:        observatory code (use 500 for geocentric)'
     print '(a)', '   <mjd>:            the modified julian date of the ephemeris you wish to generate (UTC)'
     print '(a)', '   <objectName>:     the ID of the asteroid you wish to generate an ephemeris for (MPC number or name)'
     print '(a)', '' 

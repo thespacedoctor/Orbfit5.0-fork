@@ -195,7 +195,7 @@ SUBROUTINE ofiorb(unirep,elft,nelft,elf1,nelf1,name,nameo,nobj,elem,elem_unc,def
   INTEGER lench
   EXTERNAL lench
   
-  WRITE(unirep,122)
+  ! WRITE(unirep,122)
 122 FORMAT('Input of orbital elements:')
   
 ! No orbits defined yet
