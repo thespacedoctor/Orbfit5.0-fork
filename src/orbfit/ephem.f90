@@ -521,11 +521,12 @@ contains
 
   subroutine print_help()
     print '(a)', 'usage:'
-    print '(a)', '   ephem <obscode> <mjd> <objectName>'
+    print '(a)', '   ephem <obscode> <mjd> <objectName> [</path/to/astorb.dat>]'
     print '(a)', ''
-    print '(a)', '   <obscode>:        observatory code (use 500 for geocentric)'
-    print '(a)', '   <mjd>:            the modified julian date of the ephemeris you wish to generate (UTC)'
-    print '(a)', '   <objectName>:     the ID of the asteroid you wish to generate an ephemeris for (MPC number or name)'
+    print '(a)', '   <obscode>:              observatory code (use 500 for geocentric)'
+    print '(a)', '   <mjd>:                  the modified julian date of the ephemeris you wish to generate (UTC)'
+    print '(a)', '   <objectName>:           the ID of the asteroid you wish to generate an ephemeris for (MPC number or name)'
+    print '(a)', "   </path/to/astorb.dat>   override the default location for astorb.dat (Default in Orbfit's /lib directory)"
     print '(a)', '' 
     print '(a)', 'cmdline options:'
     print '(a)', ''
