@@ -16,6 +16,7 @@ PROGRAM ephem
 
   character(len=*), parameter :: version = '1.0'
   character(len=32) :: arg
+  character(len=200) :: oefilepath
   character(len=8) :: date
   character(len=10) :: time
   character(len=5) :: zone
@@ -172,7 +173,7 @@ PROGRAM ephem
      end select
   end do
 
-  if (command_argument_count() /= 3) then
+  if (command_argument_count() /= 3 .AND. command_argument_count() /= 4) then
       call print_help()
       stop
   else
@@ -233,8 +234,20 @@ PROGRAM ephem
 
   lenld=lench(dlibd)
 
-  stringInput = "object1.inc_files = " // dlibd(1:lenld) // "/astorb.dat[BA2]"
-  CALL rdstropt(stringInput) 
+  if  (command_argument_count() == 3) then
+    stringInput = "object1.inc_files = " // dlibd(1:lenld) // "/astorb.dat[BA2]"
+    CALL rdstropt(stringInput) 
+  else if (command_argument_count() == 4) then
+      do i = 1, command_argument_count()
+         call get_command_argument(i, oefilepath)
+         if (i == 4) then
+            stringInput = "object1.inc_files = " // trim(oefilepath) // "[BA2]"
+            CALL rdstropt(stringInput) 
+         end if
+      end do
+  end if
+  ! stringInput = "object1.inc_files = " // dlibd(1:lenld) // "/astorb.dat[BA2]"
+  ! CALL rdstropt(stringInput) 
 
 
 ! HARDWIRED SETTINGS
