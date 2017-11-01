@@ -155,6 +155,9 @@ PROGRAM ephem
 ! ephemerides
   unieph=7
 
+  file='/dev/null'
+  OPEN(unirep,FILE=file,STATUS='UNKNOWN')
+
 ! Flags indicating whether output orbital element file and .odc file
 ! are to be opened or not
   opdif=.true.
