@@ -5206,6 +5206,7 @@ SUBROUTINE rdast2_fork(unit,filnam,objnam,nobj,deforb,defcn,           &
 3 END DO                                                                      
   GOTO 1 
 2 CONTINUE 
+CLOSE(unit)
 END SUBROUTINE rdast2_fork    
 
 function upper(strIn) result(strOut)
