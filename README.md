@@ -8,7 +8,7 @@ I've also made a few minor modifications to the main body of code, including to 
 
 ## Installation
 
-To install this fork of Orbfit, you should be able to clone this repo to your machine and then [follow these install instructions](http://psweb.mp.qub.ac.uk/dry//blog/2017/09/15/Installing-OrbFit-5.0-on-macOS.html) but using the code in this repo and not the code downloaded from the Orbfit distribution site.
+To install this fork of Orbfit, you should be able to clone this repo to your machine and then [follow these install instructions](http://www.astronotes.co.uk//blog/2017/09/15/Installing-OrbFit-5.0-on-macOS.html) but using the code in this repo and not the code downloaded from the Orbfit distribution site.
 
 ```bash
 git clone git@github.com:thespacedoctor/Orbfit5.0-fork.git
