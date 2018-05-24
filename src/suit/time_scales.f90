@@ -317,7 +317,7 @@
           IF(nit.GT.nitutc) THEN 
               WRITE(*,100) mjd1,sec1,scale 
               WRITE(*,*)mjd1,sec1
-              STOP' **** timnf: abnormal END ****' 
+              STOP ' **** timnf: abnormal END ****' 
           END IF 
           IF(sec.LT.0.d0) THEN 
 ! Duration in seconds of the previous day                               
@@ -356,7 +356,7 @@
           IF(nit.GT.nitmax) THEN 
               WRITE(*,100) mjd1,sec1,scale 
               WRITE(*,*)mjd1,sec1
-              STOP' **** timnf: abnormal END ****' 
+              STOP ' **** timnf: abnormal END ****' 
           END IF 
           k=sec/86400.d0 
           IF(sec.LT.0.d0) k=k-1 
@@ -616,7 +616,7 @@
       if(eqsc.eq.eqsc2) return 
                                                                         
 ! Check on infinite loops                                               
-      if(loops.gt.6) stop' **** cnvtim: too many loops ****' 
+      if(loops.gt.6) STOP ' **** cnvtim: too many loops ****' 
       loops=loops+1 
                                                                         
 ! Transformations are performed according to the following path:        
@@ -650,7 +650,7 @@
               nit=nit+1 
               if(nit.gt.nitmax)then 
                   write(*,100) mjd1,sec1,scale1 
-                  stop' **** cnvtim: abnormal end ****' 
+                  STOP ' **** cnvtim: abnormal end ****' 
               endif 
 !   c) try to find the starting value of TDT from the approximate       
 !      value of UT1                                                     
@@ -695,7 +695,7 @@
               nit=nit+1 
               if(nit.gt.nitmax)then 
                   write(*,101) mjd1,sec1,scale1 
-                  stop' **** cnvtim: abnormal end ****' 
+                  STOP ' **** cnvtim: abnormal end ****' 
               end if 
 !   c) try to find the starting value of TAI from the approximate       
 !      value of UTC                                                     

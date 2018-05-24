@@ -419,13 +419,13 @@ CONTAINS
 ! \interface
     INTEGER, INTENT (IN) :: i,l,m 
 ! \endint
-    if(l.lt.0)stop' **** indcoe: l < 0 ****' 
-    if(m.lt.0)stop' **** indcoe: m < 0 ****' 
-    if(m.gt.l)stop' **** indcoe: m > l ****' 
+    if(l.lt.0)STOP ' **** indcoe: l < 0 ****' 
+    if(m.lt.0)STOP ' **** indcoe: m < 0 ****' 
+    if(m.gt.l)STOP ' **** indcoe: m > l ****' 
     if(m.eq.0)then 
-       if(i.ne.1)stop' **** indcoe: i .ne. 1 (m=0) ****' 
+       if(i.ne.1)STOP ' **** indcoe: i .ne. 1 (m=0) ****' 
     else 
-       if(i.ne.1.and.i.ne.0)stop' **** indcoe: i = ? (m>0) ****' 
+       if(i.ne.1.and.i.ne.0)STOP ' **** indcoe: i = ? (m>0) ****' 
     endif
     indcoe=l*l+2*m+i 
   END FUNCTION indcoe

@@ -13,7 +13,9 @@ cover/
 html_test_coverage_report/
 _ignore_*
 build
-
+*.gem
+*.gemspec
+Gemfile.lock
 # Compiled python modules.
 *.pyc
 

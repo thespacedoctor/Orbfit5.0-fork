@@ -132,7 +132,7 @@ subroutine rotmt(alpha,r,k)
   double precision alpha,r(3,3) 
   double precision cosa,sina 
   integer k,i1,i2,i3 
-  if(k.lt.1.or.k.gt.3)stop' **** ROTMT: k = ??? ****' 
+  if(k.lt.1.or.k.gt.3)STOP ' **** ROTMT: k = ??? ****' 
   cosa=cos(alpha) 
   sina=sin(alpha) 
   i1=k 

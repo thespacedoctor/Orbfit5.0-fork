@@ -244,6 +244,7 @@ PROGRAM ephem
       do i = 1, command_argument_count()
          call get_command_argument(i, oefilepath)
          if (i == 4) then
+            print *, 'TEST:', oefilepath
             stringInput = "object1.inc_files = " // trim(oefilepath) // "[BA2]"
             CALL rdstropt(stringInput) 
          end if

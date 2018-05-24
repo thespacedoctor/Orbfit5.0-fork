@@ -122,7 +122,7 @@ PROGRAM moid_timeder
            ELSEIF(dmintil(h).gt.0.d0.and.deriv(h).gt.0.d0)THEN
               phatime(h)=(d_thres-dmintil(h))/deriv(h)
            ELSE
-              WRITE(*,*)'LIMITING CASE: STOP'
+              WRITE(*,*)'LIMITING CASE: STOP '
               STOP 
            ENDIF
            elemt=elem%t/365.25+1858.87953

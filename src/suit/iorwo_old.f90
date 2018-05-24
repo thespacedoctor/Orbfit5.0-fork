@@ -429,7 +429,7 @@
                alpha(n)=0.d0 
                rmsa(n)=-1.d0 
             ELSE 
-               STOP'*** rearwo: internal error (1) ***' 
+               STOP '*** rearwo: internal error (1) ***' 
             ENDIF 
 ! photometry has no meaning                                             
             smag(n)='      ' 

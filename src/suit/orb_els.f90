@@ -559,7 +559,7 @@
       INTEGER i
 !   test for hyperbolic orbit                                           
       if(eq(1).le.0.d0)then 
-         stop'****** equcar: hyperbolic/parabolic orbit ******' 
+         STOP '****** equcar: hyperbolic/parabolic orbit ******' 
       endif 
 !  non--singular intermediate variables                                 
       ecc2=eq(2)**2+eq(3)**2 
@@ -610,7 +610,7 @@
 !  convergence problems -- this should happen only for                  
 !  extremely high eccentricity                                          
          WRITE(*,*)' eqcar : df=',df, ' elements ',eq 
-!         stop'****** equcar: 100 iterations of Newton ******'          
+!         STOP '****** equcar: 100 iterations of Newton ******'          
       endif 
 !  cartesian coordinates in the equinoctal frame x2, y2, 0              
    17 x2=eq(1)*(ch*cosf+chk*sinf-eq(3)) 

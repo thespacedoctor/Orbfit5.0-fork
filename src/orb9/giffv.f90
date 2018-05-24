@@ -121,7 +121,7 @@
       WRITE ( *, 188) 
   188 FORMAT(' 1=plot 2=spectrum 3=filter 4=linfit 5=smooth'/           &
      &   ' 6=out 7=delta,sigma 8=store 9=change device '/               &
-     &' 0=change arg -1=stop')                                          
+     &' 0=change arg -1=STOP ')                                          
       READ ( *, * ) isp 
       WRITE ( *, 667) isp 
   667 FORMAT(' isp= ',i4) 
@@ -226,7 +226,7 @@ menu: SELECT CASE(isp)
          WRITE (10, 194) 
    70    CONTINUE 
          WRITE ( *, 193) 
-  193 FORMAT   (' period, itest(1=filter,0=no); per<0 to stop' ) 
+  193 FORMAT   (' period, itest(1=filter,0=no); per<0 to STOP ' ) 
          READ ( *, * ) per, itest 
          IF (per.le.0.d0) goto 89 
          CALL peri2 (x, s,  nn, per, sp, itest, d0, d1, d2) 
@@ -349,7 +349,7 @@ menu: SELECT CASE(isp)
          ENDIF        
 ! **************************************************************        
       CASE(-1) menu ! close and/or change file
-         CALL PROMPT(' change input file? 1=yes 0=stop', &
+         CALL PROMPT(' change input file? 1=yes 0=STOP ', &
               ibegin, 0, 1)
          CLOSE(10)
          IF(ibegin.eq.1)THEN

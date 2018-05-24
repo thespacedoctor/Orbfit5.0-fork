@@ -285,7 +285,7 @@ END SUBROUTINE input_families
        propel(npro)%pr_fr(1)=nj-f
     ELSE
        WRITE(*,*)' input_propeltro: l45=', l45
-       STOP' ***** error in Trojan proper elements input *********'
+       STOP ' ***** error in Trojan proper elements input *********'
     ENDIF
     propel(npro)%pr_el(2)=pre
     propel(npro)%pr_fr(2)=g

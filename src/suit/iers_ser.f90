@@ -301,7 +301,7 @@ CONTAINS
           coef(k)=cc*1.D-4 
 2      ENDDO 
        READ(unit,*,END=3) p 
-       STOP' **** dut1r: error (01) ****' 
+       STOP ' **** dut1r: error (01) ****' 
 3      CONTINUE 
        CLOSE(unit) 
     END IF
@@ -1005,7 +1005,7 @@ CALL rdbula(blafil,mjd2,tiers,xiers,niers,niersx,isamp,npt,   &
   
       IF(iicier.NE.36) THEN 
          CALL ierini 
-         IF(iicier.NE.36) STOP' **** iersts: internal error (01) ****' 
+         IF(iicier.NE.36) STOP ' **** iersts: internal error (01) ****' 
       END IF 
   
 ! Extrapolation       
@@ -1030,7 +1030,7 @@ CALL rdbula(blafil,mjd2,tiers,xiers,niers,niersx,isamp,npt,   &
                ELSEIF(ABS(tjme-tint2).LE.eps) THEN 
                   iextr=1 
                END IF
-               IF(iextr.EQ.0)STOP' **** iersts: internal error (02) ****'      
+               IF(iextr.EQ.0)STOP ' **** iersts: internal error (02) ****'      
             ELSE 
                WRITE(*,100) tjme 
                STOP '**** iersts: abnormal END ****' 
@@ -2515,7 +2515,7 @@ ELSEIF(rsys.EQ.'MEAN') THEN
         rot=MATMUL(r,rot) ! CALL pdmat(r,rot) 
         rsys='ECLM' 
     ELSE 
-        STOP' **** rotsys: internal error (03) ****' 
+        STOP ' **** rotsys: internal error (03) ****' 
     END IF 
 ELSEIF(rsys.EQ.'ECLM') THEN 
 ! Trasformation ECLM -> MEAN: rotation around x1 axis by the negative   
@@ -2558,7 +2558,7 @@ ELSEIF(rsys.EQ.'BF  ') THEN
     rot=MATMUL(r,rot) ! CALL pdmat(r,rot) 
     rsys='TRUE' 
 ELSE 
-    STOP' **** rotsys: internal error (04) ****' 
+    STOP ' **** rotsys: internal error (04) ****' 
 END IF 
       ELSE 
 RETURN 

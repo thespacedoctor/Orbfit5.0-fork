@@ -4791,7 +4791,7 @@ SUBROUTINE rdelem(unit,objnam,nobj,infiles,nfil,deforb,defcn,      &
   EXTERNAL lench 
                                                                         
 ! Number of input files                                                 
-  IF(nfil.GT.nfilx) STOP '**** rdelem: nfil > nfilx ****' 
+!  IF(nfil.GT.nfilx) STOP '**** rdelem: nfil > nfilx ****' 
                                                                         
 ! Nothing to do                                                         
   IF(nfil.LE.0) RETURN 
